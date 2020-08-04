@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  cache:
+    image: memcached:1.6
+  
+  db:
+    image: postgres:9.5
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - 5432
+    environment:
+      - POSTGRES_USER=clinica
+      - POSTGRES_PASSWORD=clinica
+  
+  openclinica:
+    build: openclinica
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./datainfo.properties:/usr/local/tomcat/webapps/OpenClinica/WEB-INF/classes/datainfo.properties
+    links:
+      - cache:cache
+      - db:db
+
+volumes:
+        postgres:
